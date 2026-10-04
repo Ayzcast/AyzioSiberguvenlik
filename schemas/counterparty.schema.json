@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ayzio/counterparty.schema.json",
+  "title": "Ayzio Karşı Taraf (KYC) Kaydı",
+  "type": "object",
+  "required": ["id", "company", "representative", "bank_accounts", "kyc"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "pattern": "^cp-[a-z0-9-]+$" },
+    "company": {
+      "type": "object",
+      "required": ["legal_name", "country", "registration_no"],
+      "additionalProperties": false,
+      "properties": {
+        "legal_name": { "type": "string" },
+        "legal_name_en": { "type": "string" },
+        "short_name": { "type": "string" },
+        "country": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "registration_no": { "type": "string" },
+        "registered_address": { "type": "string" },
+        "declared_address": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "website": { "type": "string" },
+        "charter_capital": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": { "type": "number" },
+            "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+            "share_count": { "type": "integer" },
+            "par_value": { "type": "number" }
+          }
+        }
+      }
+    },
+    "representative": {
+      "type": "object",
+      "required": ["full_name", "role"],
+      "additionalProperties": false,
+      "properties": {
+        "full_name": { "type": "string" },
+        "role": { "type": "string" },
+        "nationality": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "birth_year": { "type": "integer" },
+        "passport_no_masked": { "type": "string" },
+        "passport_country": { "type": "string", "pattern": "^[A-Z]{2}$" },
+        "passport_expiry": { "type": "string", "format": "date" },
+        "national_id_masked": { "type": "string" },
+        "document_ref": { "type": "string", "description": "Tam belge şifreli depoda; burada yalnız referans." }
+      }
+    },
+    "bank_accounts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["bank_name", "swift", "currency"],
+        "additionalProperties": false,
+        "properties": {
+          "label": { "type": "string" },
+          "bank_name": { "type": "string" },
+          "bank_address": { "type": "string" },
+          "swift": { "type": "string", "pattern": "^[A-Z0-9]{8}([A-Z0-9]{3})?$" },
+          "account_name": { "type": "string" },
+          "account_no_masked": { "type": "string" },
+          "currency": { "type": "string", "pattern": "^[A-Z]{3}$" },
+          "correspondent": {
+            "type": "object",
+            "properties": {
+              "bank_name": { "type": "string" },
+              "bank_address": { "type": "string" },
+              "swift": { "type": "string", "pattern": "^[A-Z0-9]{8}([A-Z0-9]{3})?$" }
+            }
+          },
+          "verified": { "type": "boolean" }
+        }
+      }
+    },
+    "kyc": {
+      "type": "object",
+      "required": ["status", "source_document"],
+      "additionalProperties": false,
+      "properties": {
+        "status": { "enum": ["pending_verification", "verified", "rejected"] },
+        "risk_level": { "enum": ["low", "medium", "high", "unassessed"] },
+        "source_document": { "type": "string" },
+        "source_date": { "type": "string", "format": "date" },
+        "checks_pending": { "type": "array", "items": { "type": "string" } },
+        "flags": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
